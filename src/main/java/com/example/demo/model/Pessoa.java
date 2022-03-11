@@ -1,19 +1,22 @@
-package com.example.demo;
+package com.example.demo.model;
 
 public class Pessoa {
 
 	private static int numPessoas = 0;
+	private int id;
 	private String nome;
 	private int idade;
-	private int id;
+	private String email;
 
+	
 	/**
 	 * @param name
 	 * @param idade
 	 */
-	public Pessoa(String nome, int idade) {
+	public Pessoa(String nome, int idade, String email) {
 		this.nome = nome;
 		this.idade = idade;
+		this.email = email;
 		id = numPessoas;
 		numPessoas++;
 	}
@@ -21,14 +24,14 @@ public class Pessoa {
 	/**
 	 * @return the name
 	 */
-	public String getName() {
+	public String getNome() {
 		return nome;
 	}
 
 	/**
 	 * @param name the name to set
 	 */
-	public void setName(String nome) {
+	public void setNome(String nome) {
 		this.nome = nome;
 	}
 
@@ -53,4 +56,20 @@ public class Pessoa {
 		return id;
 	}
 
+	/**
+	 * @return the email
+	 */
+	public String getEmail() {
+		return email;
+	}
+
+	/**
+	 * @param email the email to set
+	 */
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	
+	
 }
