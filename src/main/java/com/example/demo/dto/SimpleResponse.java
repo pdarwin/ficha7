@@ -10,6 +10,10 @@ public class SimpleResponse {
 		msg = "Ocorreu um erro";
 	}
 
+	public void addMsg(String msg) {
+		this.msg += "\n" + msg;
+	}
+	
 	/**
 	 * @return the statusOk
 	 */
@@ -22,6 +26,7 @@ public class SimpleResponse {
 	 */
 	public void setStatusOk(boolean statusOk) {
 		this.statusOk = statusOk;
+		this.msg = "Executado sem erros.";
 	}
 
 	/**

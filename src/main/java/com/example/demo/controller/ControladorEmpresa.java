@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.dto.SimpleResponse;
 import com.example.demo.model.Empresa;
 import com.example.demo.service.ServiceEmpresa;
 
@@ -48,12 +49,17 @@ public class ControladorEmpresa {
     
     
     @PostMapping("/addEmpresa")
-    public List <Empresa> addEmpresa (@RequestBody Empresa empresa) 
+    public SimpleResponse addEmpresa (@RequestBody Empresa empresa) 
     {
 		
-		if (empresa.getNome() == null || empresa.getNome().isBlank() ) return java.util.Collections.emptyList();
+    	SimpleResponse sResponse = new SimpleResponse();
+		if (empresa.getNome() == null || empresa.getNome().isBlank() )
+		{
+			sResponse.addMsg("Nome da empresa não preenchido");
+			return sResponse;
+		}
 		
-		return sEmpresa.addEmpresa(empresa) ? sEmpresa.getAllEmpresas() : java.util.Collections.emptyList() ;
+		return sEmpresa.addEmpresa(empresa);
     	
     }
     

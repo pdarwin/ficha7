@@ -5,7 +5,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.example.demo.dto.SimpleResponse;
 import com.example.demo.model.Empresa;
+import com.example.demo.model.Pessoa;
 
 @Service
 public class ServiceEmpresa {
@@ -27,10 +29,10 @@ public class ServiceEmpresa {
     	return null;
     }
 	
-    public boolean addEmpresa (Empresa empresa) 
+    public SimpleResponse addEmpresa (Empresa empresa) 
     {
 		empresas.add (empresa);
-		return true;
+		return null;
     }
    
     
@@ -70,7 +72,22 @@ public class ServiceEmpresa {
 		{
 	    	return false;
 		}
-    
     }
-
+    
+    public SimpleResponse addPessoa (Pessoa pessoa)
+    {
+    	SimpleResponse sResponse = new SimpleResponse();
+    	for (Empresa empresa : empresas)
+    	{
+    		if (pessoa.getEmpresaId()== empresa.getId())
+    		{
+    			empresa.addPessoa(pessoa);
+    			sResponse.setStatusOk(true);
+    			return sResponse;
+    		}
+    	}
+    	
+    	sResponse.addMsg("Empresa não encontrada.");
+    	return sResponse;
+    }
 }

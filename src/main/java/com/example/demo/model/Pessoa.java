@@ -7,7 +7,7 @@ public class Pessoa {
 	private String nome;
 	private int idade;
 	private String email;
-
+	private int empresaId;
 	
 	/**
 	 * @param name
@@ -20,7 +20,7 @@ public class Pessoa {
 		id = numPessoas;
 		numPessoas++;
 	}
-
+	
 	/**
 	 * @return the name
 	 */
@@ -70,6 +70,18 @@ public class Pessoa {
 		this.email = email;
 	}
 
-	
+	/**
+	 * @return the idEmpresa
+	 */
+	public int getEmpresaId() {
+		return empresaId;
+	}
+
+	/**
+	 * @param idEmpresa the idEmpresa to set
+	 */
+	public void setEmpresaId(int empresaId) {
+		this.empresaId = empresaId;
+	}
 	
 }

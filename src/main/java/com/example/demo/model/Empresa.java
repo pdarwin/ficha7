@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Empresa {
@@ -23,9 +24,22 @@ public class Empresa {
 		this.morada = morada;
 		this.numFuncionariosAtual = numFuncionariosAtual;
 		this.numFuncionariosDesdeCriacao = numFuncionariosDesdeCriacao;
+		this.pessoas = new ArrayList<Pessoa>();
 		id = numEmpresas;
 		numEmpresas++;
 	}
+	
+	public void addPessoa (Pessoa pessoa)
+	{
+		pessoas.add(pessoa);
+	}
+
+	
+	public void removePessoa (Pessoa pessoa)
+	{
+		pessoas.remove(pessoa);
+	}
+
 	
 	/**
 	 * @return the id

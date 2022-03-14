@@ -11,19 +11,26 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.dto.SimpleResponse;
+import com.example.demo.dto.SimpleResponsePessoas;
 import com.example.demo.model.Pessoa;
+import com.example.demo.service.ServiceEmpresa;
 import com.example.demo.service.ServicePessoa;
+
+import net.bytebuddy.asm.Advice.Return;
 
 
 @RestController
 public class ControladorPessoa {
 
 	private final ServicePessoa sPessoa;
+	private final ServiceEmpresa sEmpresa;
 	
 	@Autowired
-	public ControladorPessoa (ServicePessoa sPessoa)
+	public ControladorPessoa (ServicePessoa sPessoa, ServiceEmpresa sEmpresa)
 	{
 		this.sPessoa = sPessoa;
+		this.sEmpresa = sEmpresa;
 	}
 	
     @GetMapping("/getAllPessoas")
@@ -48,26 +55,50 @@ public class ControladorPessoa {
     
     
     @PostMapping("/addPessoa")
-    public List <Pessoa> addPessoa (@RequestBody Pessoa pessoa) 
+    public SimpleResponsePessoas SimpleResponsePessoas (@RequestBody Pessoa pessoa) 
     {
-		
-		if (pessoa.getNome() == null || pessoa.getNome().isBlank() || pessoa.getIdade() <= 0) return java.util.Collections.emptyList();
-		
-		return sPessoa.addPessoa(pessoa) ? sPessoa.getAllPessoas() : java.util.Collections.emptyList() ;
     	
+    	SimpleResponsePessoas sResponse = new SimpleResponsePessoas();
+    	
+		if (pessoa.getNome() == null || pessoa.getNome().isBlank())
+		{
+			sResponse.addMsg("Nome não preenchido.");
+			return sResponse;
+		}
+		if (pessoa.getIdade() <= 0)
+		{
+			sResponse.addMsg("A idade tem de ser maior que zero.");
+			return sResponse;
+		}
+		
+		
+		if (sEmpresa.addPessoa(pessoa).isStatusOk())
+		{
+			sResponse = (SimpleResponsePessoas) sPessoa.addPessoa(pessoa);
+		}
+		
+		if (sResponse == null) sResponse = new SimpleResponsePessoas();
+		
+		sResponse.setPessoas(sPessoa.getAllPessoas());
+		
+		return sResponse;
+		
     }
     
     @DeleteMapping("/deletePessoa/{id}")
-    public String deletePessoa(@PathVariable String id){
+    public SimpleResponse deletePessoa(@PathVariable String id){
+    	
+    	SimpleResponse sResponse = new SimpleResponse();
     	
     	try 
     	{
-    		return sPessoa.deletePessoa(Integer.parseInt(id)) ? "Pessoa removida com sucesso" : "Alguma coisa falhou";
+    		return sPessoa.deletePessoa(Integer.parseInt(id));
 			
 		} 
     	catch (Exception e) 
     	{
-			return "ID inválido";
+			sResponse.addMsg("ID inválido");
+			return sResponse;
 		}
     }
     

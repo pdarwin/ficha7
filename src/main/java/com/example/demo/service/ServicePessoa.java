@@ -3,8 +3,11 @@ package com.example.demo.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.catalina.startup.SetAllPropertiesRule;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.dto.SimpleResponse;
+import com.example.demo.dto.SimpleResponsePessoas;
 import com.example.demo.model.Pessoa;
 
 @Service
@@ -27,23 +30,30 @@ public class ServicePessoa {
     	return null;
     }
 	
-    public boolean addPessoa (Pessoa pessoa) 
+    public SimpleResponse addPessoa (Pessoa pessoa) 
     {
+    	SimpleResponse sResponse = new SimpleResponse();
 		pessoas.add (pessoa);
-		return true;
+		sResponse.setStatusOk(true);
+		return sResponse;
     }
    
     
-    public boolean deletePessoa(int id){
-		for (Pessoa pessoa : pessoas)
+    public SimpleResponse deletePessoa(int id){
+		
+    	SimpleResponse sr = new SimpleResponse();
+    	
+    	for (Pessoa pessoa : pessoas)
 		{
     		if (pessoa.getId() == id)
     		{
     			pessoas.remove(pessoa);
-    			return true;
+    			return null;
     		}
 		}
-		return false;
+		
+		sr.addMsg("Id Não encontrado.");
+		return sr;
 	} 
 
     
