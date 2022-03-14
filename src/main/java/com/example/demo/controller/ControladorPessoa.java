@@ -12,30 +12,24 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.SimpleResponse;
-import com.example.demo.dto.SimpleResponsePessoas;
+import com.example.demo.dto.PessoasResposta;
 import com.example.demo.model.Pessoa;
-import com.example.demo.service.ServiceEmpresa;
-import com.example.demo.service.ServicePessoa;
-
-import net.bytebuddy.asm.Advice.Return;
-
+import com.example.demo.service.ServicePessoaEmpresa;
 
 @RestController
 public class ControladorPessoa {
 
-	private final ServicePessoa sPessoa;
-	private final ServiceEmpresa sEmpresa;
+	private final ServicePessoaEmpresa sPessoaEmpresa;
 	
 	@Autowired
-	public ControladorPessoa (ServicePessoa sPessoa, ServiceEmpresa sEmpresa)
+	public ControladorPessoa (ServicePessoaEmpresa sPessoaEmpresa)
 	{
-		this.sPessoa = sPessoa;
-		this.sEmpresa = sEmpresa;
+		this.sPessoaEmpresa = sPessoaEmpresa;
 	}
 	
     @GetMapping("/getAllPessoas")
     public List<Pessoa> getAllPessoas(){
-		return sPessoa.getAllPessoas();
+		return sPessoaEmpresa.getAllPessoas();
     }
     
     @GetMapping("/getPessoaById/{id}")
@@ -43,7 +37,7 @@ public class ControladorPessoa {
 		
     	try 
     	{
-    		return sPessoa.getPessoaById(Integer.parseInt(id));
+    		return sPessoaEmpresa.getPessoaById(Integer.parseInt(id));
 			
 		} 
     	catch (Exception e) 
@@ -55,10 +49,10 @@ public class ControladorPessoa {
     
     
     @PostMapping("/addPessoa")
-    public SimpleResponsePessoas SimpleResponsePessoas (@RequestBody Pessoa pessoa) 
+    public PessoasResposta SimpleResponsePessoas (@RequestBody Pessoa pessoa) 
     {
     	
-    	SimpleResponsePessoas sResponse = new SimpleResponsePessoas();
+    	PessoasResposta sResponse = new PessoasResposta();
     	
 		if (pessoa.getNome() == null || pessoa.getNome().isBlank())
 		{
@@ -72,14 +66,14 @@ public class ControladorPessoa {
 		}
 		
 		
-		if (sEmpresa.addPessoa(pessoa).isStatusOk())
+		if (sPessoaEmpresa.addPessoa(pessoa).isStatusOk())
 		{
-			sResponse = (SimpleResponsePessoas) sPessoa.addPessoa(pessoa);
+			sResponse = (PessoasResposta) sPessoaEmpresa.addPessoa(pessoa);
 		}
 		
-		if (sResponse == null) sResponse = new SimpleResponsePessoas();
+		if (sResponse == null) sResponse = new PessoasResposta();
 		
-		sResponse.setPessoas(sPessoa.getAllPessoas());
+		sResponse.setPessoas(sPessoaEmpresa.getAllPessoas());
 		
 		return sResponse;
 		
@@ -92,7 +86,7 @@ public class ControladorPessoa {
     	
     	try 
     	{
-    		return sPessoa.deletePessoa(Integer.parseInt(id));
+    		return sPessoaEmpresa.deletePessoa(Integer.parseInt(id));
 			
 		} 
     	catch (Exception e) 
@@ -109,8 +103,10 @@ public class ControladorPessoa {
     	
 		if (p.getNome() == null || p.getNome().isBlank()) return "Nome inválido";
 
-    	return sPessoa.updatePessoa(p) ? "Sucesso ao atualizar pessoa" : "Alguma coisa falhou";
+    	return sPessoaEmpresa.updatePessoa(p) ? "Sucesso ao atualizar pessoa" : "Alguma coisa falhou";
 
     }
+    
+
 
 }

@@ -4,10 +4,10 @@ import java.util.List;
 
 import com.example.demo.model.Pessoa;
 
-public class SimpleResponsePessoas extends SimpleResponse {
+public class PessoasResposta extends SimpleResponse {
 
 	private List<Pessoa> pessoas;
-	public SimpleResponsePessoas() {
+	public PessoasResposta() {
 		// TODO Auto-generated constructor stub
 	}
 	/**

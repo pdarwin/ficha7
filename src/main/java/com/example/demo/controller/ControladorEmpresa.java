@@ -13,23 +13,23 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.SimpleResponse;
 import com.example.demo.model.Empresa;
-import com.example.demo.service.ServiceEmpresa;
+import com.example.demo.service.ServicePessoaEmpresa;
 
 
 @RestController
 public class ControladorEmpresa {
 
-	private final ServiceEmpresa sEmpresa;
-	
+	private final ServicePessoaEmpresa sPessoaEmpresa;
+
 	@Autowired
-	public ControladorEmpresa (ServiceEmpresa sEmpresa)
+	public ControladorEmpresa (ServicePessoaEmpresa sPessoaEmpresa)
 	{
-		this.sEmpresa = sEmpresa;
+		this.sPessoaEmpresa = sPessoaEmpresa;
 	}
 	
     @GetMapping("/getAllEmpresas")
     public List<Empresa> getAllEmpresas(){
-		return sEmpresa.getAllEmpresas();
+		return sPessoaEmpresa.getAllEmpresas();
     }
     
     @GetMapping("/getEmpresaById/{id}")
@@ -37,7 +37,7 @@ public class ControladorEmpresa {
 		
     	try 
     	{
-    		return sEmpresa.getEmpresaById(Integer.parseInt(id));
+    		return sPessoaEmpresa.getEmpresaById(Integer.parseInt(id));
 			
 		} 
     	catch (Exception e) 
@@ -53,13 +53,14 @@ public class ControladorEmpresa {
     {
 		
     	SimpleResponse sResponse = new SimpleResponse();
-		if (empresa.getNome() == null || empresa.getNome().isBlank() )
+	
+    	if (empresa.getNome() == null || empresa.getNome().isBlank() )
 		{
 			sResponse.addMsg("Nome da empresa não preenchido");
 			return sResponse;
 		}
 		
-		return sEmpresa.addEmpresa(empresa);
+		return sPessoaEmpresa.addEmpresa(empresa);
     	
     }
     
@@ -68,7 +69,7 @@ public class ControladorEmpresa {
     	
     	try 
     	{
-    		return sEmpresa.deleteEmpresa(Integer.parseInt(id)) ? "Empresa removida com sucesso" : "Alguma coisa falhou";
+    		return sPessoaEmpresa.deleteEmpresa(Integer.parseInt(id)) ? "Empresa removida com sucesso" : "Alguma coisa falhou";
 			
 		} 
     	catch (Exception e) 
@@ -83,7 +84,7 @@ public class ControladorEmpresa {
     	
 		if (p.getNome() == null || p.getNome().isBlank()) return "Nome inválido";
 
-    	return sEmpresa.updateEmpresa(p) ? "Sucesso ao atualizar empresa" : "Alguma coisa falhou";
+    	return sPessoaEmpresa.updateEmpresa(p) ? "Sucesso ao atualizar empresa" : "Alguma coisa falhou";
 
     }
 
