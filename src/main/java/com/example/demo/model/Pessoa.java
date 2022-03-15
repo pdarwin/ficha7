@@ -1,25 +1,30 @@
 package com.example.demo.model;
 
-public class Pessoa {
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
-	private static int numPessoas = 0;
-	private int id;
+@Entity
+@Table(name = "Pessoa")
+public class Pessoa {
+    
+	private static Long numPessoas = 0l;
+	
+	@Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+	private Long id;
+	
+    @ManyToOne
+    @JoinColumn(name="empresa_id", nullable=false)
+    private Empresa empresa;
+	
 	private String nome;
 	private int idade;
 	private String email;
-	private int empresaId;
-	
-	/**
-	 * @param name
-	 * @param idade
-	 */
-	public Pessoa(String nome, int idade, String email) {
-		this.nome = nome;
-		this.idade = idade;
-		this.email = email;
-		id = numPessoas;
-		numPessoas++;
-	}
 	
 	/**
 	 * @return the name
@@ -52,7 +57,7 @@ public class Pessoa {
 	/**
 	 * @return the id
 	 */
-	public int getId() {
+	public Long getId() {
 		return id;
 	}
 
@@ -73,15 +78,17 @@ public class Pessoa {
 	/**
 	 * @return the idEmpresa
 	 */
-	public int getEmpresaId() {
-		return empresaId;
+	public Long getEmpresaId() {
+		return empresa.getId();
 	}
 
-	/**
-	 * @param idEmpresa the idEmpresa to set
-	 */
-	public void setEmpresaId(int empresaId) {
-		this.empresaId = empresaId;
-	}
+    @Override
+    public String toString() {
+        return "Pessoa{" +
+                "id=" + id +
+                ", age=" + idade +
+                ", name='" + nome + '\'' +
+                '}';
+    }
 	
 }

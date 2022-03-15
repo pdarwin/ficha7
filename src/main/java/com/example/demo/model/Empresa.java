@@ -1,33 +1,31 @@
 package com.example.demo.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "Empresa")
 public class Empresa {
 
-	private static int numEmpresas = 0;
-	private int id;
+	private static Long numEmpresas = 0l;
+	
+	@Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+	private Long id;
+	
 	private String nome;
 	private String morada;
 	private int numFuncionariosAtual;
 	private int numFuncionariosDesdeCriacao;
-	private List <Pessoa> pessoas;
 	
-	/**
-	 * @param nome
-	 * @param morada
-	 * @param numFuncionariosAtual
-	 * @param numFuncionariosDesdeCriacao
-	 */
-	public Empresa(String nome, String morada, int numFuncionariosAtual, int numFuncionariosDesdeCriacao) {
-		this.nome = nome;
-		this.morada = morada;
-		this.numFuncionariosAtual = numFuncionariosAtual;
-		this.numFuncionariosDesdeCriacao = numFuncionariosDesdeCriacao;
-		this.pessoas = new ArrayList<Pessoa>();
-		id = numEmpresas;
-		numEmpresas++;
-	}
+	@OneToMany(mappedBy="empresa")
+	private List <Pessoa> pessoas;
 	
 	public void addPessoa (Pessoa pessoa)
 	{
@@ -44,7 +42,7 @@ public class Empresa {
 	/**
 	 * @return the id
 	 */
-	public int getId() {
+	public Long getId() {
 		return id;
 	}
 

@@ -11,7 +11,7 @@ public class SimpleResponse {
 	}
 
 	public void addMsg(String msg) {
-		this.msg += "\n" + msg;
+		this.msg += ": " + msg;
 	}
 	
 	/**
@@ -26,7 +26,7 @@ public class SimpleResponse {
 	 */
 	public void setStatusOk(boolean statusOk) {
 		this.statusOk = statusOk;
-		this.msg = "Executado sem erros.";
+		this.msg = "Operação realizada com sucesso.";
 	}
 
 	/**

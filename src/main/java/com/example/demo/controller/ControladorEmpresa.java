@@ -1,8 +1,11 @@
 package com.example.demo.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,6 +14,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.dto.EmpresasResposta;
 import com.example.demo.dto.SimpleResponse;
 import com.example.demo.model.Empresa;
 import com.example.demo.service.ServicePessoaEmpresa;
@@ -27,17 +31,17 @@ public class ControladorEmpresa {
 		this.sPessoaEmpresa = sPessoaEmpresa;
 	}
 	
-    @GetMapping("/getAllEmpresas")
-    public List<Empresa> getAllEmpresas(){
-		return sPessoaEmpresa.getAllEmpresas();
+	@GetMapping("/getEmpresas")
+    public List<Empresa> getEmpresas(){
+		return sPessoaEmpresa.getEmpresas();
     }
     
-    @GetMapping("/getEmpresaById/{id}")
-    public Empresa getEmpresaById(@PathVariable String id){
+    @GetMapping("/getEmpresa/{id}")
+    public Optional <Empresa> getEmpresa(@PathVariable String id){
 		
     	try 
     	{
-    		return sPessoaEmpresa.getEmpresaById(Integer.parseInt(id));
+    		return sPessoaEmpresa.getEmpresa(id);
 			
 		} 
     	catch (Exception e) 
@@ -49,43 +53,124 @@ public class ControladorEmpresa {
     
     
     @PostMapping("/addEmpresa")
-    public SimpleResponse addEmpresa (@RequestBody Empresa empresa) 
+    public ResponseEntity<EmpresasResposta> addEmpresa (@RequestBody Empresa empresa) 
     {
-		
-    	SimpleResponse sResponse = new SimpleResponse();
-	
-    	if (empresa.getNome() == null || empresa.getNome().isBlank() )
+    	
+    	EmpresasResposta sResponse = new EmpresasResposta();
+    	
+		if (empresa.getId() != null)
 		{
-			sResponse.addMsg("Nome da empresa não preenchido");
-			return sResponse;
+			sResponse.addMsg("ID não nulo.");
+			return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(sResponse);
+		}		
+		
+		if ((empresa.getNome() == null))
+		{
+			sResponse.addMsg("Nome nulo.");
+			return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(sResponse);
 		}
 		
-		return sPessoaEmpresa.addEmpresa(empresa);
-    	
+//		if ((pessoa.getEmail() == null))
+//		{
+//			sResponse.addMsg("Email nulo.");
+//			return sResponse;
+//		}	
+		
+		String msg = sPessoaEmpresa.addEmpresa(empresa);
+		
+		if (!msg.isBlank())
+		{
+			sResponse.addMsg(msg);
+			return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(sResponse);
+		}
+		else
+		{
+			sResponse.setStatusOk(true);
+			sResponse.setEmpresas(getEmpresas());
+			return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(sResponse);
+		}
+		
     }
     
-    @DeleteMapping("/deleteEmpresa/{id}")
-    public String deleteEmpresa(@PathVariable String id){
+    @DeleteMapping("/removeEmpresa")
+    public ResponseEntity<SimpleResponse> removeEmpresa(@RequestBody Empresa empresa){
     	
-    	try 
-    	{
-    		return sPessoaEmpresa.deleteEmpresa(Integer.parseInt(id)) ? "Empresa removida com sucesso" : "Alguma coisa falhou";
-			
-		} 
-    	catch (Exception e) 
-    	{
-			return "ID inválido";
+    	SimpleResponse sResponse = new SimpleResponse();
+    	
+
+		String msg = sPessoaEmpresa.removeEmpresa(empresa);
+		
+		if (!msg.isBlank())
+		{
+			sResponse.addMsg(msg);
+			return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(sResponse);
 		}
+		else
+		{
+			sResponse.setStatusOk(true);
+			return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(sResponse);
+		}
+			
+    }
+    
+    @DeleteMapping("/removeEmpresa2/{id}")
+    public ResponseEntity<SimpleResponse> removeEmpresa2(@PathVariable String id){
+    	
+    	SimpleResponse sResponse = new SimpleResponse();
+    	
+
+		String msg = sPessoaEmpresa.removeEmpresa2(id);
+		
+		if (!msg.isBlank())
+		{
+			sResponse.addMsg(msg);
+			return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(sResponse);
+		}
+		else
+		{
+			sResponse.setStatusOk(true);
+			return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(sResponse);
+		}
+			
     }
     
     @PutMapping ("/updateEmpresa")
-    public String updateEmpresa (@RequestBody Empresa p)
+    public ResponseEntity<SimpleResponse> updateEmpresa (@RequestBody Empresa empresa)
     {	
-    	
-		if (p.getNome() == null || p.getNome().isBlank()) return "Nome inválido";
-
-    	return sPessoaEmpresa.updateEmpresa(p) ? "Sucesso ao atualizar empresa" : "Alguma coisa falhou";
-
+    	SimpleResponse sResponse = new SimpleResponse();
+        	
+		String msg = sPessoaEmpresa.updateEmpresa(empresa);
+		
+		if (!msg.isBlank())
+		{
+			sResponse.addMsg(msg);
+			return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(sResponse);
+		}
+		else
+		{
+			sResponse.setStatusOk(true);
+			return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(sResponse);
+		}
     }
 
 }

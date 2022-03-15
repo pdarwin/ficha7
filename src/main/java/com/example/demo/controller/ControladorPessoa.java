@@ -1,8 +1,11 @@
 package com.example.demo.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,86 +30,139 @@ public class ControladorPessoa {
 		this.sPessoaEmpresa = sPessoaEmpresa;
 	}
 	
-    @GetMapping("/getAllPessoas")
-    public List<Pessoa> getAllPessoas(){
-		return sPessoaEmpresa.getAllPessoas();
+    @GetMapping("/getPessoas")
+    public List<Pessoa> getPessoas(){
+		return sPessoaEmpresa.getPessoas();
     }
     
-    @GetMapping("/getPessoaById/{id}")
-    public Pessoa getPessoaById(@PathVariable String id){
+    @GetMapping("/getPessoa/{id}")
+    public Optional <Pessoa> getPessoa(@PathVariable String id){
 		
-    	try 
-    	{
-    		return sPessoaEmpresa.getPessoaById(Integer.parseInt(id));
-			
-		} 
-    	catch (Exception e) 
-    	{
-			return null;
-		}
+    	return sPessoaEmpresa.getPessoa(id);
   
     }
     
     
     @PostMapping("/addPessoa")
-    public PessoasResposta SimpleResponsePessoas (@RequestBody Pessoa pessoa) 
+    public ResponseEntity<PessoasResposta> addPessoa (@RequestBody Pessoa pessoa) 
     {
     	
     	PessoasResposta sResponse = new PessoasResposta();
     	
-		if (pessoa.getNome() == null || pessoa.getNome().isBlank())
+		if (pessoa.getId() != null)
 		{
-			sResponse.addMsg("Nome não preenchido.");
-			return sResponse;
-		}
-		if (pessoa.getIdade() <= 0)
+			sResponse.addMsg("ID não nulo.");
+			return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(sResponse);
+		}		
+		
+		if ((pessoa.getNome() == null))
 		{
-			sResponse.addMsg("A idade tem de ser maior que zero.");
-			return sResponse;
+			sResponse.addMsg("Nome nulo.");
+			return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(sResponse);
 		}
 		
+//		if ((pessoa.getEmail() == null))
+//		{
+//			sResponse.addMsg("Email nulo.");
+//			return sResponse;
+//		}	
 		
-		if (sPessoaEmpresa.addPessoa(pessoa).isStatusOk())
+		String msg = sPessoaEmpresa.addPessoa(pessoa);
+		
+		if (!msg.isBlank())
 		{
-			sResponse = (PessoasResposta) sPessoaEmpresa.addPessoa(pessoa);
+			sResponse.addMsg(msg);
+			return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(sResponse);
 		}
-		
-		if (sResponse == null) sResponse = new PessoasResposta();
-		
-		sResponse.setPessoas(sPessoaEmpresa.getAllPessoas());
-		
-		return sResponse;
+		else
+		{
+			sResponse.setStatusOk(true);
+			sResponse.setPessoas(getPessoas());
+			return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(sResponse);
+		}
 		
     }
     
-    @DeleteMapping("/deletePessoa/{id}")
-    public SimpleResponse deletePessoa(@PathVariable String id){
+    @DeleteMapping("/removePessoa")
+    public ResponseEntity<SimpleResponse> removePessoa(@RequestBody Pessoa pessoa){
     	
     	SimpleResponse sResponse = new SimpleResponse();
     	
-    	try 
-    	{
-    		return sPessoaEmpresa.deletePessoa(Integer.parseInt(id));
-			
-		} 
-    	catch (Exception e) 
-    	{
-			sResponse.addMsg("ID inválido");
-			return sResponse;
+
+		String msg = sPessoaEmpresa.removePessoa(pessoa);
+		
+		if (!msg.isBlank())
+		{
+			sResponse.addMsg(msg);
+			return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(sResponse);
 		}
+		else
+		{
+			sResponse.setStatusOk(true);
+			return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(sResponse);
+		}
+			
+    }
+    
+    @DeleteMapping("/removePessoa2/{id}")
+    public ResponseEntity<SimpleResponse> removePessoa2(@PathVariable String id){
+    	
+    	SimpleResponse sResponse = new SimpleResponse();
+    	
+
+		String msg = sPessoaEmpresa.removePessoa2(id);
+		
+		if (!msg.isBlank())
+		{
+			sResponse.addMsg(msg);
+			return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(sResponse);
+		}
+		else
+		{
+			sResponse.setStatusOk(true);
+			return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(sResponse);
+		}
+			
     }
     
     @PutMapping ("/updatePessoa")
-    public String updatePessoa (@RequestBody Pessoa p)
+    public ResponseEntity<SimpleResponse> updatePessoa (@RequestBody Pessoa pessoa)
     {	
-		if (p.getIdade() <= 0 ) return "Idade inválida";
-    	
-		if (p.getNome() == null || p.getNome().isBlank()) return "Nome inválido";
-
-    	return sPessoaEmpresa.updatePessoa(p) ? "Sucesso ao atualizar pessoa" : "Alguma coisa falhou";
-
+    	SimpleResponse sResponse = new SimpleResponse();
+        	
+		String msg = sPessoaEmpresa.updatePessoa(pessoa);
+		
+		if (!msg.isBlank())
+		{
+			sResponse.addMsg(msg);
+			return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(sResponse);
+		}
+		else
+		{
+			sResponse.setStatusOk(true);
+			return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(sResponse);
+		}
     }
-    
 
 
 }
