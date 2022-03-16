@@ -39,15 +39,7 @@ public class ControladorEmpresa {
     @GetMapping("/getEmpresa/{id}")
     public Optional <Empresa> getEmpresa(@PathVariable String id){
 		
-    	try 
-    	{
-    		return sPessoaEmpresa.getEmpresa(id);
-			
-		} 
-    	catch (Exception e) 
-    	{
-			return null;
-		}
+    	return sPessoaEmpresa.getEmpresa(id);
   
     }
     
