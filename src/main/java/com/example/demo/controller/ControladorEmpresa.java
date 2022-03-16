@@ -74,12 +74,6 @@ public class ControladorEmpresa {
                     .body(sResponse);
 		}
 		
-//		if ((pessoa.getEmail() == null))
-//		{
-//			sResponse.addMsg("Email nulo.");
-//			return sResponse;
-//		}	
-		
 		String msg = sPessoaEmpresa.addEmpresa(empresa);
 		
 		if (!msg.isBlank())
@@ -151,9 +145,9 @@ public class ControladorEmpresa {
     }
     
     @PutMapping ("/updateEmpresa")
-    public ResponseEntity<SimpleResponse> updateEmpresa (@RequestBody Empresa empresa)
+    public ResponseEntity<EmpresasResposta> updateEmpresa (@RequestBody Empresa empresa)
     {	
-    	SimpleResponse sResponse = new SimpleResponse();
+    	EmpresasResposta sResponse = new EmpresasResposta();
         	
 		String msg = sPessoaEmpresa.updateEmpresa(empresa);
 		
@@ -167,6 +161,7 @@ public class ControladorEmpresa {
 		else
 		{
 			sResponse.setStatusOk(true);
+			sResponse.setEmpresas(getEmpresas());
 			return ResponseEntity
                     .status(HttpStatus.OK)
                     .body(sResponse);

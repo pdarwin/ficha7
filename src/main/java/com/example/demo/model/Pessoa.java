@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -8,17 +9,19 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "Pessoa")
 public class Pessoa {
-    
-	private static Long numPessoas = 0l;
 	
 	@Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
+	@Column (name ="id", nullable = false)
 	private Long id;
 	
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name="empresa_id", nullable=false)
     private Empresa empresa;
 	
@@ -82,7 +85,22 @@ public class Pessoa {
 		return empresa.getId();
 	}
 
-    @Override
+	
+    /**
+	 * @return the empresa
+	 */
+	public Empresa getEmpresa() {
+		return empresa;
+	}
+
+	/**
+	 * @param empresa the empresa to set
+	 */
+	public void setEmpresa(Empresa empresa) {
+		this.empresa = empresa;
+	}
+
+	@Override
     public String toString() {
         return "Pessoa{" +
                 "id=" + id +

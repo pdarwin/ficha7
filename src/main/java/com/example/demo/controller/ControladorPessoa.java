@@ -43,15 +43,15 @@ public class ControladorPessoa {
     }
     
     
-    @PostMapping("/addPessoa")
-    public ResponseEntity<PessoasResposta> addPessoa (@RequestBody Pessoa pessoa) 
+    @PostMapping("/addPessoa/{empresa_id}")
+    public ResponseEntity<PessoasResposta> addPessoa (@RequestBody Pessoa pessoa, @PathVariable String empresa_id) 
     {
     	
     	PessoasResposta sResponse = new PessoasResposta();
     	
 		if (pessoa.getId() != null)
 		{
-			sResponse.addMsg("ID não nulo.");
+			sResponse.addMsg("ID pessoa não nulo.");
 			return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body(sResponse);
@@ -65,13 +65,15 @@ public class ControladorPessoa {
                     .body(sResponse);
 		}
 		
-//		if ((pessoa.getEmail() == null))
-//		{
-//			sResponse.addMsg("Email nulo.");
-//			return sResponse;
-//		}	
+		if (empresa_id == null || empresa_id.isBlank())
+		{
+			sResponse.addMsg("ID empresa não preenchido.");
+			return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(sResponse);
+		}
 		
-		String msg = sPessoaEmpresa.addPessoa(pessoa);
+		String msg = sPessoaEmpresa.addPessoa(pessoa, empresa_id);
 		
 		if (!msg.isBlank())
 		{

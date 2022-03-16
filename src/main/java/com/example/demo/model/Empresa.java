@@ -12,8 +12,6 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "Empresa")
 public class Empresa {
-
-	private static Long numEmpresas = 0l;
 	
 	@Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -26,18 +24,6 @@ public class Empresa {
 	
 	@OneToMany(mappedBy="empresa")
 	private List <Pessoa> pessoas;
-	
-	public void addPessoa (Pessoa pessoa)
-	{
-		pessoas.add(pessoa);
-	}
-
-	
-	public void removePessoa (Pessoa pessoa)
-	{
-		pessoas.remove(pessoa);
-	}
-
 	
 	/**
 	 * @return the id
@@ -95,19 +81,5 @@ public class Empresa {
 		this.numFuncionariosDesdeCriacao = numFuncionariosDesdeCriacao;
 	}
 
-	/**
-	 * @return the pessoas
-	 */
-	public List<Pessoa> getPessoas() {
-		return pessoas;
-	}
-
-	/**
-	 * @param pessoas the pessoas to set
-	 */
-	public void setPessoas(List<Pessoa> pessoas) {
-		this.pessoas = pessoas;
-	}
 	
-
 }

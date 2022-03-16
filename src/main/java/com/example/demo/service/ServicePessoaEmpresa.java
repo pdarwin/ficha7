@@ -31,7 +31,7 @@ public class ServicePessoaEmpresa {
         this.eRepository = eRepository;
     }
     
-    public String addPessoa (Pessoa pessoa) 
+    public String addPessoa (Pessoa pessoa, String empresa_id) 
     {
     	if (pessoa.getNome().isBlank()) return "Nome não preenchido.";
     	
@@ -42,22 +42,25 @@ public class ServicePessoaEmpresa {
 			if (!verifyEmail(pessoa.getEmail())) return "Email inválido";
 		}
     	
-    	pRepository.save(pessoa);
-    	return "";
-		
-//    	for (Empresa empresa : empresas)
-//    	{
-//    		if (pessoa.getEmpresaId()== empresa.getId())
-//    		{
-//    			empresa.addPessoa(pessoa);
-//    			sResponse.setStatusOk(true);
-//    			return sResponse;
-//    		}
-//    	}
-//    	
-//    	sResponse.addMsg("Empresa não encontrada.");
-//    	return sResponse;
-		
+		try {
+			Long emp_id = parseLong(empresa_id);
+			for (Empresa empresa : getEmpresas())
+	    	{
+	    		if (emp_id == empresa.getId())
+	    		{
+	    			pessoa.setEmpresa(empresa);
+	    	    	pRepository.save(pessoa);
+	    	    	empresa.setNumFuncionariosAtual(empresa.getNumFuncionariosAtual() + 1);
+	    	    	empresa.setNumFuncionariosDesdeCriacao(empresa.getNumFuncionariosDesdeCriacao() + 1);
+	    	    	eRepository.save(empresa);
+	    	    	return "";
+	    		}
+	    	}
+		} catch (NumberFormatException e) {
+			return "ID de empresa inválido";
+		}	
+    	
+    	return "Empresa não encontrada.";
     }
    
     
@@ -67,8 +70,9 @@ public class ServicePessoaEmpresa {
         	return "ID de pessoa não encontrado.";
         }
 
-        Pessoa p = pRepository.findById(pessoa.getId()).get();
-        pRepository.delete(p);
+        pRepository.delete(pessoa);
+        pessoa.getEmpresa().setNumFuncionariosAtual(pessoa.getEmpresa().getNumFuncionariosAtual()-1);
+        eRepository.save(pessoa.getEmpresa());
 
         return "";
     }
@@ -83,6 +87,8 @@ public class ServicePessoaEmpresa {
 
             Pessoa p = pRepository.findById(id_long).get();
             pRepository.delete(p);
+            p.getEmpresa().setNumFuncionariosAtual(p.getEmpresa().getNumFuncionariosAtual()-1);
+            eRepository.save(p.getEmpresa());
             return "";
             
         }catch (Exception e){
@@ -160,23 +166,25 @@ public class ServicePessoaEmpresa {
         if (empresa.getId() == null || eRepository.findById(empresa.getId()).isEmpty()){
         	return "ID de empresa não encontrado.";
         }
-
-        Empresa emp = eRepository.findById(empresa.getId()).get();
-        eRepository.delete(emp);
-
+        
+    	removePessoasFromEmpresa(empresa.getId());
+        eRepository.delete(empresa);
         return "";
     }
 
     public String removeEmpresa2(String id){
         try {
-            Long id_long = parseLong(id);
+            Long emp_id = parseLong(id);
 
-            if (id == null || id_long==NaN || eRepository.findById(id_long).isEmpty()){
+            if (id == null || emp_id==NaN || eRepository.findById(emp_id).isEmpty()){
                 return "ID de empresa em formato errado ou não encontrado.";
             }
 
-            Pessoa emp = pRepository.findById(id_long).get();
-            pRepository.delete(emp);
+            Empresa emp = eRepository.findById(emp_id).get();
+            
+            removePessoasFromEmpresa(emp_id);
+            
+            eRepository.delete(emp);
             return "";
             
         }catch (Exception e){
@@ -188,7 +196,7 @@ public class ServicePessoaEmpresa {
     public String updateEmpresa (Empresa empresa)
     {	
     	if (eRepository.findById(empresa.getId()).isEmpty()){
-            return "ID de pessoa não encontrado.";
+            return "ID de empresa não encontrado.";
         }
 
         Empresa emp = eRepository.findById(empresa.getId()).get();
@@ -202,7 +210,7 @@ public class ServicePessoaEmpresa {
 
         eRepository.save(emp);
         return "";
-    
+        
     }
     
     public Optional<Empresa> getEmpresa(String id)
@@ -223,17 +231,30 @@ public class ServicePessoaEmpresa {
         return empresas;
     }
     
-    public boolean verifyEmail (String email)
+    private boolean verifyEmail (String email)
     {
     	final String regex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
     	
     	Pattern pattern = Pattern.compile(regex);
 
-  
             Matcher matcher = pattern.matcher(email);
 
             return matcher.matches();
     	
+    }
+    
+    private void removePessoasFromEmpresa (Long empresa_id)
+    {
+    	List<Pessoa> pessoas = new ArrayList<>();
+        
+    	pRepository.findAll().forEach(pessoas::add);
+        for (Pessoa pessoa : pessoas)
+        {
+        	if (pessoa.getEmpresaId() == empresa_id)
+        	{
+        		removePessoa(pessoa);
+        	}
+        }
     }
 
 }
