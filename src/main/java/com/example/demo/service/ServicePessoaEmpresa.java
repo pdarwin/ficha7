@@ -218,7 +218,7 @@ public class ServicePessoaEmpresa {
         try {
 			return eRepository.findById(parseLong(id));
 		} catch (NumberFormatException e) {
-			// TODO Auto-generated catch block
+
 			return null;
 		}
     }
