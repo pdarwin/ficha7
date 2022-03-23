@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +21,7 @@ import com.example.demo.model.Pessoa;
 import com.example.demo.service.ServicePessoaEmpresa;
 
 @RestController
+@CrossOrigin
 public class ControladorPessoa {
 
 	private final ServicePessoaEmpresa sPessoaEmpresa;
@@ -31,11 +33,13 @@ public class ControladorPessoa {
 	}
 	
     @GetMapping("/getPessoas")
+	@CrossOrigin
     public List<Pessoa> getPessoas(){
 		return sPessoaEmpresa.getPessoas();
     }
     
     @GetMapping("/getPessoa/{id}")
+    @CrossOrigin
     public Optional <Pessoa> getPessoa(@PathVariable String id){
 		
     	return sPessoaEmpresa.getPessoa(id);
@@ -44,6 +48,7 @@ public class ControladorPessoa {
     
     
     @PostMapping("/addPessoa/{empresa_id}")
+    @CrossOrigin
     public ResponseEntity<PessoasResposta> addPessoa (@RequestBody Pessoa pessoa, @PathVariable String empresa_id) 
     {
     	
@@ -94,6 +99,7 @@ public class ControladorPessoa {
     }
     
     @DeleteMapping("/removePessoa")
+    @CrossOrigin
     public ResponseEntity<SimpleResponse> removePessoa(@RequestBody Pessoa pessoa){
     	
     	SimpleResponse sResponse = new SimpleResponse();
@@ -119,6 +125,7 @@ public class ControladorPessoa {
     }
     
     @DeleteMapping("/removePessoa2/{id}")
+    @CrossOrigin
     public ResponseEntity<SimpleResponse> removePessoa2(@PathVariable String id){
     	
     	SimpleResponse sResponse = new SimpleResponse();
@@ -133,7 +140,7 @@ public class ControladorPessoa {
                     .status(HttpStatus.BAD_REQUEST)
                     .body(sResponse);
 		}
-		else
+		else	
 		{
 			sResponse.setStatusOk(true);
 			return ResponseEntity
@@ -144,6 +151,7 @@ public class ControladorPessoa {
     }
     
     @PutMapping ("/updatePessoa")
+    @CrossOrigin
     public ResponseEntity<SimpleResponse> updatePessoa (@RequestBody Pessoa pessoa)
     {	
     	SimpleResponse sResponse = new SimpleResponse();
